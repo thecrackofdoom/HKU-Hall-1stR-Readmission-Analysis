@@ -1,182 +1,105 @@
-'''
-
-pdf = pdfplumber.open("Fun/data/1.pdf")
-page = pdf.pages[0]
-print(page.extract_text())
-'''
-import re
 import sqlite3
-import pdfplumber
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Make plots look nicer
+sns.set_theme(style="whitegrid")
+
 def create_connection(db_file):
-    """Create a database connection to the SQLite database specified by db_file."""
     conn = None
     try:
         conn = sqlite3.connect(db_file)
         return conn
     except sqlite3.Error as e:
-        print(e)
+        print(f"Error connecting to database: {e}")
     return conn
-def create_table(conn):
-    try:
-        # SQL statement to create a table
-        sql_create_applicants_table = """
-        CREATE TABLE IF NOT EXISTS applicants (
-            applicant_id TEXT PRIMARY KEY,
-            college TEXT NOT NULL,
-            admission_status TEXT NOT NULL,
-            room_type TEXT,
-            degree TEXT,
-            student_status TEXT
-        );
-        """
-        cursor = conn.cursor()
-        cursor.execute(sql_create_applicants_table)
-        print("Table 'applicants' created or already exists.")
-    except sqlite3.Error as e:
-        print(e)
-def insert_applicant(conn, applicant_data):
-    """
-    Insert a new applicant into the applicants table.
-    applicant_data should be a tuple: (UID, College, Status, Room_Type, Degree, Student_Status)
-    """
-    sql = """
-    INSERT INTO applicants(applicant_id, college, admission_status, room_type, degree, student_status)
-    VALUES(?,?,?,?,?,?)
-    """
-    cursor = conn.cursor()
-    try:
-        cursor.execute(sql, applicant_data)
-        conn.commit()
-        # print(f"Inserted applicant: {applicant_data[0]}") # Uncomment for verbose logging
-    except sqlite3.IntegrityError:
-        # print(f"Applicant ID {applicant_data[0]} already exists, skipping insertion.")
-        pass # Suppress output if it's expected behavior, as PRIMARY KEY handles duplicates
-    except sqlite3.Error as e:
-        print(f"Error inserting applicant {applicant_data[0]} from {applicant_data[1]}: {e}")
 
+database_file = "Fun/admission_results.db"
+conn = create_connection(database_file)
 
-def get_all_applicants(conn):
-    """Query all rows in the applicants table."""
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM applicants")
-    rows = cursor.fetchall()
-    return rows
-def get_admission_summary(conn):
-    """Get a summary of admission statuses per college."""
-    sql_summary = """
-    SELECT
-        college,
-        admission_status,
-        COUNT(applicant_id) as count
-    FROM
-        applicants
-    GROUP BY
-        college, admission_status
-    ORDER BY
-        college, admission_status;
-    """
-    cursor = conn.cursor()
-    cursor.execute(sql_summary)
-    rows = cursor.fetchall()
-    return rows
-def process(path, conn):
-    jcsv1 = ["LHTH.pdf","Starr.pdf","Ricci.pdf"]
-    jcsv2 = ["LSK.pdf","SCSH.pdf","MH.pdf","SJC.pdf"]
-    jcsv3 = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf"]
-    jcsv4 = ["DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf"]
-    sassoon = ["RCLee.pdf", "LHH.pdf","WL.pdf"]
-    campus = ["Swire.pdf","SKYLee.pdf", "UH.pdf"]
-    college = "null"
-    if path in jcsv3:
-        match path:
-            case "SHC.pdf":
-                college = "Shun Hing College"
-            case "CSC.pdf":
-                college = "Chi Sun College"
-            case "LCC.pdf":
-                college = "Lap Chee College"
-            case "NC.pdf":
-                college = "New College"
-        with pdfplumber.open(f"Fun/data/{path}") as pdf:
-            applicant_data = []
-            for page in pdf.pages:
-                text = page.extract_text()
-                
-                suc_start = text.find("Successful Applicants")
-                un_start = text.find("Unsuccessful Applicants")
-                section = text[suc_start:un_start]
-                if text.find("Waitlisted Applicants") != -1:
-                    wait_start = text.find("Waitlisted Applicants")
-                    section = text[suc_start:wait_start]
-                
-                if college != "New College":
-                    successful_pattern = r"\d{10}\s\w+"
-                    matches = re.findall(successful_pattern, section)
-                    for match in matches:
-                        uid, room_type = match.split()
-                        applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': room_type, 'Degree': None, 'Student_Status': None})
-                else:
-                    successful_pattern = r"\d{10}"
-                    matches = re.findall(successful_pattern, section)
-                    for match in matches:
-                        uid = match
-                        applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': "Double", 'Degree': None, 'Student_Status': None})
-                
-                if text.find("Waitlisted Applicants") != -1:
-                    section = text[wait_start:un_start]
-                    wait_pattern = r"\d{10}"
-                    matches = re.findall(wait_pattern, section)
-                    for match in matches:
-                        uid = match
-                        applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+if conn:
+    # Fetch data into a Pandas DataFrame for easier manipulation and plotting
+    df = pd.read_sql_query("SELECT * FROM applicants", conn)
+    conn.close() # Close connection after fetching data
 
-                section = text[un_start:]
-                unsuccessful_pattern = r"\d{10}"
-                matches = re.findall(unsuccessful_pattern, section)
-                for match in matches:
-                    uid = match
-                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
-        return applicant_data
-    elif path in jcsv4:
-        match path:
-            case "DHC.pdf":
-                college = "DH Chen College"
-            case "1.pdf":
-                college = "1st College"
-            case "2.pdf":
-                college = "2nd College"
-            case "KCC.pdf":
-                college = "Karson Choi College"
-            
-if __name__ == "__main__":
-    database_file = "Fun/admission_results.db"
+    print("Data loaded into DataFrame. Starting visualizations...")
 
-    # 1. Connect to the database
-    conn = create_connection(database_file)
+    # --- Visualization 1: Admission Status Breakdown by College (Bar Chart) ---
+    print("\n--- Generating Admission Status Breakdown by College ---")
+    status_by_college = df.groupby(['college', 'admission_status']).size().unstack(fill_value=0)
 
-    if conn:
-        # 2. Create the table
-        create_table(conn)
-        
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM applicants")
-        conn.commit()
-        print("Cleared existing data from 'applicants' table.")
-        
-        for filename in ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf"]:
-            extracted_applicants = process(filename, conn)
-            print(f"  Found {len(extracted_applicants)} applicants for {filename}.")
-            for applicant in extracted_applicants:
-                insert_applicant(
-                    conn,
-                    (applicant['UID'], applicant['College'], applicant['Status'],
-                     applicant['Room_Type'], applicant['Degree'], applicant['Student_Status'])
-                )
+    # Plotting
+    status_by_college.plot(kind='bar', stacked=True, figsize=(12, 7))
+    plt.title('Admission Status Breakdown by College')
+    plt.xlabel('College')
+    plt.ylabel('Number of Applicants')
+    plt.xticks(rotation=45, ha='right')
+    plt.legend(title='Admission Status')
+    plt.tight_layout() # Adjust layout to prevent labels from overlapping
+    plt.show()
 
-            print(f"  Data from {filename} inserted/skipped successfully.")
-        
-        summary = get_admission_summary(conn)
-        for row in summary:
-            college, status, count = row
-            print(f"College: {college}, Status: {status}, Count: {count}")
-    
+    # --- Visualization 2: Room Type Distribution for Successful Applicants (Bar Chart) ---
+    print("\n--- Generating Room Type Distribution for Successful Applicants ---")
+    successful_room_types = df[
+        (df['admission_status'] == 'Successful') &
+        (df['room_type'].notna()) &
+        (df['room_type'] != '')
+    ]
+
+    if not successful_room_types.empty:
+        room_type_counts = successful_room_types.groupby('room_type').size().sort_values(ascending=False)
+
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x=room_type_counts.index, y=room_type_counts.values, palette='viridis')
+        plt.title('Distribution of Room Types for Successful Applicants')
+        plt.xlabel('Room Type')
+        plt.ylabel('Number of Applicants')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        plt.show()
+    else:
+        print("  No room type data found for successful applicants to visualize.")
+
+    # --- Visualization 3: Overall Admission Status Proportions (Pie Chart) ---
+    print("\n--- Generating Overall Admission Status Proportions ---")
+    overall_status_counts = df['admission_status'].value_counts()
+
+    plt.figure(figsize=(8, 8))
+    plt.pie(overall_status_counts, labels=overall_status_counts.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette('pastel'))
+    plt.title('Overall Admission Status Proportions')
+    plt.axis('equal') # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.show()
+    # --- New Visualization: Percentage of Admission Status per College ---
+    print("\n--- Generating Percentage of Admission Status per College ---")
+
+    # Calculate counts of each admission status per college
+    status_counts_per_college = df.groupby(['college', 'admission_status']).size().reset_index(name='count')
+
+    # Calculate total applicants per college
+    total_applicants_per_college = df.groupby('college').size().reset_index(name='total_college_applicants')
+
+    # Merge to get total applicants per college in the status_counts_per_college DataFrame
+    status_percentages_df = pd.merge(status_counts_per_college, total_applicants_per_college, on='college')
+
+    # Calculate percentage
+    status_percentages_df['percentage'] = (status_percentages_df['count'] / status_percentages_df['total_college_applicants']) * 100
+
+    # Plotting using Seaborn
+    plt.figure(figsize=(14, 8))
+    sns.barplot(
+        x='college',
+        y='percentage',
+        hue='admission_status',
+        data=status_percentages_df,
+        palette='Spectral' # Choose a color palette
+    )
+    plt.title('Percentage of Admission Status per College')
+    plt.xlabel('College')
+    plt.ylabel('Percentage of Applicants (%)')
+    plt.xticks(rotation=45, ha='right')
+    plt.legend(title='Admission Status', bbox_to_anchor=(1.05, 1), loc='upper left') # Place legend outside
+    plt.tight_layout()
+    plt.show()
+else:
+    print("Could not establish database connection. Cannot perform visualizations.")
