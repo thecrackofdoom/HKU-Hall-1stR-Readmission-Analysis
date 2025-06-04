@@ -479,4 +479,33 @@ def uh(path):
             uid = match
             applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
     return applicant_data
-
+def wl(path):
+    college = "Wei Lun Hall"
+    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+        applicant_data = []
+        
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+            text += "\n"  # Ensure each page's text is separated
+        
+        suc_start = text.find("Successful")
+        un_start = text.find("Unsuccessful")
+        
+        
+        #Successful Applicants
+        section = text[suc_start:un_start]
+        successful_pattern = r"\d{10}"
+        matches = re.findall(successful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+        
+        # Unsuccessful Applicants
+        section = text[un_start:]
+        unsuccessful_pattern = r"\d{10}"
+        matches = re.findall(unsuccessful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+    return applicant_data
