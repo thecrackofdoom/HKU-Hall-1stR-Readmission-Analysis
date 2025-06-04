@@ -350,4 +350,63 @@ def skylee(path):
             uid = match
             applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
     return applicant_data
-    
+def sjc(path):
+    college = "St John's College"
+    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+        applicant_data = []
+        
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+            text += "\n"  # Ensure each page's text is separated
+        
+        suc_start = text.find("Successful")
+        un_start = text.find("Unsuccessful")
+        
+        
+        #Successful Applicants
+        section = text[suc_start:un_start]
+        successful_pattern = r"\d{10}"
+        matches = re.findall(successful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': "Single", 'Degree': None, 'Student_Status': None})
+        
+        # Unsuccessful Applicants
+        section = text[un_start:]
+        unsuccessful_pattern = r"\d{10}"
+        matches = re.findall(unsuccessful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+    return applicant_data
+def starr(path):
+    college = "Starr Hall"
+    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+        applicant_data = []
+        
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+            text += "\n"  # Ensure each page's text is separated
+        
+        suc_start = text.find("Successful List")
+        un_start = text.find("Unsuccessful List")
+        
+        
+        #Successful Applicants
+        section = text[suc_start:un_start]
+        successful_pattern = r"\d{10}"
+        matches = re.findall(successful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+        
+        # Unsuccessful Applicants
+        section = text[un_start:]
+        unsuccessful_pattern = r"\d{10}"
+        matches = re.findall(unsuccessful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+    return applicant_data
