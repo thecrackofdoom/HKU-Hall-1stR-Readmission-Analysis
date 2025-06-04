@@ -98,6 +98,30 @@ def jcsv4(path):
                 uid = match
                 applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
     return applicant_data
+def jcsv2(path):
+    match path:
+        case "LSK.pdf":
+            college = "Lee Shau Kee Hall"
+        case "MH.pdf":
+            college = "Morrison Hall"
+        case "SCSH.pdf":
+            college = "Suen Chi Sun Hall"
+    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+        applicant_data = []
+        
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+            text += "\n"  # Ensure each page's text is separated
+        
+        
+        pattern = r"\d{10}\s\w+"
+        matches = re.findall(pattern, text)
+        for match in matches:
+            uid, status = match.split()
+            applicant_data.append({'UID': uid, 'College': college, 'Status': status, 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            
+    return applicant_data
 def lhth(path):
     college = "Lady Ho Tung Hall"
     with pdfplumber.open(f"Fun/data/{path}") as pdf:
@@ -199,8 +223,8 @@ def lhh(path):
             uid = match
             applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Postgraduate", 'Student_Status': None})
     return applicant_data
-def lsk(path):
-    college = "Lee Shau Kee Hall"
+def rclee(path):
+    college = "RC Lee Hall"
     with pdfplumber.open(f"Fun/data/{path}") as pdf:
         applicant_data = []
         
@@ -208,30 +232,42 @@ def lsk(path):
         for page in pdf.pages:
             text += page.extract_text()
             text += "\n"  # Ensure each page's text is separated
+        print (text)
+        suc_start = text.find("Successful list")
+        w_start = text.find("Local(Femaleand Male)")
+        w_st = text.find("Non-Local (Femaleand Male)")
+        un_start = text.find("Unsuccessful list")
         
         
-        pattern = r"\d{10}\s\w+"
-        matches = re.findall(pattern, text)
+        #Successful Applicants.
+        section = text[suc_start:w_start]
+        successful_pattern = r"\d{10}"
+        matches = re.findall(successful_pattern, section)
         for match in matches:
-            uid, status = match.split()
-            applicant_data.append({'UID': uid, 'College': college, 'Status': status, 'Room_Type': None, 'Degree': None, 'Student_Status': None})
-            
-    return applicant_data
-def mh(path):
-    college = "Morrison Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
-        applicant_data = []
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
         
-        text = ""
-        for page in pdf.pages:
-            text += page.extract_text()
-            text += "\n"  # Ensure each page's text is separated
-        
-        
-        pattern = r"\d{10}\s\w+"
-        matches = re.findall(pattern, text)
+        #Waitlisted Local Applicants
+        section = text[w_start:w_st]
+        wait_pattern = r"\d{10}"
+        matches = re.findall(wait_pattern, section)
         for match in matches:
-            uid, status = match.split()
-            applicant_data.append({'UID': uid, 'College': college, 'Status': status, 'Room_Type': None, 'Degree': None, 'Student_Status': None})
-            
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': "Local"})
+        
+        #Waitlisted Non-local Applicants
+        section = text[w_st:un_start]
+        wait_pattern = r"\d{10}"
+        matches = re.findall(wait_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': "Non-local"})
+        
+        # Unsuccessful Applicants
+        section = text[un_start:]
+        unsuccessful_pattern = r"\d{10}"
+        matches = re.findall(unsuccessful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
     return applicant_data

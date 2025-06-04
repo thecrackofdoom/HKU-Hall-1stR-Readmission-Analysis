@@ -73,26 +73,26 @@ def get_admission_summary(conn):
     return rows
 def process(path, conn):
     jcsv1 = ["LHTH.pdf","Starr.pdf","Ricci.pdf"]
-    jcsv2 = ["LSK.pdf","SCSH.pdf","MH.pdf","SJC.pdf"]
+    jcsv2 = ["LSK.pdf","SCSH.pdf","MH.pdf"]
     jcsv3 = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf"]
     jcsv4 = ["DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf"]
     sassoon = ["RCLee.pdf", "LHH.pdf","WL.pdf"]
-    campus = ["Swire.pdf","SKYLee.pdf", "UH.pdf"]
+    campus = ["Swire.pdf","SKYLee.pdf", "UH.pdf", "SJC.pdf"]
     college = "null"
     
     if path in jcsv3:
         return p.jcsv3(path)
     elif path in jcsv4:
         return p.jcsv4(path)
+    elif path in jcsv2:
+        return p.jcsv2(path)
     match path:
         case "LHTH.pdf":
             return p.lhth(path)
         case "LHH.pdf":
             return p.lhh(path)
-        case "LSK.pdf":
-            return p.lsk(path)
-        case "MH.pdf":
-            return p.mh(path)
+        case "RCLee.pdf":
+            return p.rclee(path)
         
             
 if __name__ == "__main__":
@@ -111,8 +111,8 @@ if __name__ == "__main__":
         print("Cleared existing data from 'applicants' table.")
         Not needed for production, but useful for testing."""
         
-        added = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf"]
-        adding = ["MH.pdf"]
+        added = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf"]
+        adding = ["RCLee.pdf"]
         for filename in adding:
             extracted_applicants = process(filename, conn)
             print(f"  Found {len(extracted_applicants)} applicants for {filename}.")
