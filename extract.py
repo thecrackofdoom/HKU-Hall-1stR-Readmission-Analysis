@@ -101,6 +101,13 @@ def process(path, conn):
             return p.sjc(path)
         case "Starr.pdf":
             return p.starr(path)
+        case "Swire.pdf":
+            return p.swire(path)
+        case "UH.pdf":
+            return p.uh(path)
+        case "WL.pdf":
+            return p.wl(path)
+
         
             
 if __name__ == "__main__":
@@ -119,8 +126,8 @@ if __name__ == "__main__":
         print("Cleared existing data from 'applicants' table.")
         Not needed for production, but useful for testing."""
         
-        added = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf","RCLee.pdf","Ricci.pdf","SKYLee.pdf", "SJC.pdf"]
-        adding = ["Starr.pdf"]
+        added = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf","RCLee.pdf","Ricci.pdf","SKYLee.pdf", "SJC.pdf","Starr.pdf","SCSH.pdf", "Swire.pdf"]
+        adding = ["UH.pdf"]
         for filename in adding:
             extracted_applicants = process(filename, conn)
             print(f"  Found {len(extracted_applicants)} applicants for {filename}.")
