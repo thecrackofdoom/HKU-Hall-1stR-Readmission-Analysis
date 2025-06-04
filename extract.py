@@ -79,13 +79,17 @@ def process(path, conn):
     sassoon = ["RCLee.pdf", "LHH.pdf","WL.pdf"]
     campus = ["Swire.pdf","SKYLee.pdf", "UH.pdf"]
     college = "null"
+    
     if path in jcsv3:
         return p.jcsv3(path)
     elif path in jcsv4:
         return p.jcsv4(path)
-    elif path == "LHTH.pdf":
-        return p.lhth(path)
-    
+    match path:
+        case "LHTH.pdf":
+            return p.lhth(path)
+        case "LHH.pdf":
+            return p.lhh(path)
+        
             
 if __name__ == "__main__":
     database_file = "Fun/admission_results.db"

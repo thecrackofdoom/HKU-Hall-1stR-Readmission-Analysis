@@ -134,9 +134,82 @@ def lhh(path):
         text = ""
         for page in pdf.pages:
             text += page.extract_text()
+        print (text)
+        a = text.find("Successful - Local Underffraduate")
+        b = text.find("Unsuccessful - Local Underffraduate")
+        c = text.find("Pending - Local Undergraduate")
+        d = text.find("Successful - Non Local Underffraduate")
+        e = text.find("Unsuccessful - Non Local Undergraduate")
+        f = text.find("Successful - Postgraduate")
+        g = text.find("Unsuccessful - Postgraduate")
         
-        suc_start = text.find("Successful lists")
-        un_start = text.find("Unsuccessful lists")
+        #Successful Local Applicants
+        section = text[a:b]
+        pattern = r"\d{10}"
+        matches = re.findall(pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local"})
+            
+        # Unsuccessful Local Applicants
+        section = text[b:c]
+        pattern = r"\d{10}"
+        matches = re.findall(pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local"})
+        
+        # Pending Local Applicants
+        section = text[c:d]
+        pattern = r"\d{10}"
+        matches = re.findall(pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local"})
+        
+        # Successful Non-local Applicants
+        section = text[d:e]
+        pattern = r"\d{10}"
+        matches = re.findall(pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Non-local"})
+        
+        # Unsuccessful Non-local Applicants
+        section = text[e:f]
+        pattern = r"\d{10}"
+        matches = re.findall(pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Non-local"})
+        
+        # Successful Postgraduate Applicants
+        section = text[f:g]
+        pattern = r"\d{10}"
+        matches = re.findall(pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Postgraduate", 'Student_Status': None})
+        
+        # Unsuccessful Postgraduate Applicants
+        section = text[g:]
+        pattern = r"\d{10}"
+        matches = re.findall(pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Postgraduate", 'Student_Status': None})
+    return applicant_data
+def lsk(path):
+    college = "Lee Shau Kee College"
+    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+        applicant_data = []
+        
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+        print(text)
+        suc_start = text.find("Successful Applicants")
+        un_start = text.find("Unsuccessful Applicants")
         section = text[suc_start:un_start]
         
         #Successful Applicants
