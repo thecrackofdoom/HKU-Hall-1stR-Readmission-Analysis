@@ -130,6 +130,7 @@ def lhth(path):
         text = ""
         for page in pdf.pages:
             text += page.extract_text()
+            text += "\n"  # Ensure each page's text is separated
         
         suc_start = text.find("Successful lists")
         un_start = text.find("Unsuccessful lists")
@@ -271,3 +272,82 @@ def rclee(path):
             uid = match
             applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
     return applicant_data
+def ricci(path):
+    college = "Ricci Hall"
+    room_type = "Single"
+    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+        applicant_data = []
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+            text += "\n"  # Ensure each page's text is separated
+        print(text)
+        suc_start = text.find("offered")
+        w_start = text.find("waitlisted.")
+        un_start = text.find("unsuccessful")
+        
+        
+        #Successful Applicants.
+        section = text[suc_start:w_start]
+        successful_pattern = r"\d{10}"
+        matches = re.findall(successful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': room_type, 'Degree': None, 'Student_Status': None})
+
+        #Waitlisted Applicants
+        section = text[w_start:un_start]
+        wait_pattern = r"\d{10}"
+        matches = re.findall(wait_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+        
+        # Unsuccessful Applicants
+        section = text[un_start:]
+        unsuccessful_pattern = r"\d{10}"
+        matches = re.findall(unsuccessful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+    return applicant_data
+def skylee(path):
+    college = "Simon K.Y. Lee Hall"
+    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+        applicant_data = []
+        
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+            text += "\n"  # Ensure each page's text is separated
+        
+        suc_start = text.find("Successful")
+        w_start = text.find("Waitlisted")
+        un_start = text.find("Unsuccessful")
+        
+        
+        #Successful Applicants
+        section = text[suc_start:w_start]
+        successful_pattern = r"\d{10}"
+        matches = re.findall(successful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+        
+        #Waitlisted Applicants
+        section = text[w_start:un_start]
+        wait_pattern = r"\d{10}"
+        matches = re.findall(wait_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            
+        # Unsuccessful Applicants
+        section = text[un_start:]
+        unsuccessful_pattern = r"\d{10}"
+        matches = re.findall(unsuccessful_pattern, section)
+        for match in matches:
+            uid = match
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+    return applicant_data
+    
