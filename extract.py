@@ -95,6 +95,8 @@ def process(path, conn):
             return p.rclee(path)
         case "Ricci.pdf":
             return p.ricci(path)
+        case "SKYLee.pdf":
+            return p.skylee(path)
         
             
 if __name__ == "__main__":
@@ -113,8 +115,8 @@ if __name__ == "__main__":
         print("Cleared existing data from 'applicants' table.")
         Not needed for production, but useful for testing."""
         
-        added = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf","RCLee.pdf"]
-        adding = ["Ricci.pdf"]
+        added = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf","RCLee.pdf","Ricci.pdf",]
+        adding = ["SKYLee.pdf"]
         for filename in adding:
             extracted_applicants = process(filename, conn)
             print(f"  Found {len(extracted_applicants)} applicants for {filename}.")
