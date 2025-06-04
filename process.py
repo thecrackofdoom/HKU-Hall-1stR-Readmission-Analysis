@@ -200,30 +200,38 @@ def lhh(path):
             applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Postgraduate", 'Student_Status': None})
     return applicant_data
 def lsk(path):
-    college = "Lee Shau Kee College"
+    college = "Lee Shau Kee Hall"
     with pdfplumber.open(f"Fun/data/{path}") as pdf:
         applicant_data = []
         
         text = ""
         for page in pdf.pages:
             text += page.extract_text()
-        print(text)
-        suc_start = text.find("Successful Applicants")
-        un_start = text.find("Unsuccessful Applicants")
-        section = text[suc_start:un_start]
+            text += "\n"  # Ensure each page's text is separated
         
-        #Successful Applicants
-        successful_pattern = r"\d{10}"
-        matches = re.findall(successful_pattern, section)
+        
+        pattern = r"\d{10}\s\w+"
+        matches = re.findall(pattern, text)
         for match in matches:
-            uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            uid, status = match.split()
+            applicant_data.append({'UID': uid, 'College': college, 'Status': status, 'Room_Type': None, 'Degree': None, 'Student_Status': None})
             
-        # Unsuccessful Applicants
-        section = text[un_start:]
-        unsuccessful_pattern = r"\d{10}"
-        matches = re.findall(unsuccessful_pattern, section)
+    return applicant_data
+def mh(path):
+    college = "Morrison Hall"
+    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+        applicant_data = []
+        
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text()
+            text += "\n"  # Ensure each page's text is separated
+        
+        
+        pattern = r"\d{10}\s\w+"
+        matches = re.findall(pattern, text)
         for match in matches:
-            uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            uid, status = match.split()
+            applicant_data.append({'UID': uid, 'College': college, 'Status': status, 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            
     return applicant_data
