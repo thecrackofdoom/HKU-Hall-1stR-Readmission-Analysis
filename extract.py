@@ -28,7 +28,7 @@ def create_table(conn):
             room_type TEXT,
             degree TEXT,
             student_status TEXT,
-            year INTERGER NOT NULL default (2025),
+            year INTERGER NOT NULL,
             PRIMARY KEY(applicant_id, year)
         );
         """
@@ -39,8 +39,8 @@ def create_table(conn):
         print(e)
 def insert_applicant(conn, applicant_data):
     sql = """
-    INSERT OR REPLACE INTO applicants(applicant_id, college, admission_status, room_type, degree, student_status)
-    VALUES(?,?,?,?,?,?)
+    INSERT OR REPLACE INTO applicants(applicant_id, college, admission_status, room_type, degree, student_status, year)
+    VALUES(?,?,?,?,?,?,?)
     """
     cursor = conn.cursor()
     try:
@@ -59,15 +59,16 @@ def get_admission_summary(conn):
     """Get a summary of admission statuses per college."""
     sql_summary = """
     SELECT
+        year,
         college,
         admission_status,
         COUNT(applicant_id) as count
     FROM
         applicants
     GROUP BY
-        college, admission_status
+        year, college, admission_status
     ORDER BY
-        college, admission_status;
+        year, college, admission_status;
     """
     cursor = conn.cursor()
     cursor.execute(sql_summary)
@@ -128,8 +129,8 @@ if __name__ == "__main__":
         print("Cleared existing data from 'applicants' table.")
         Not needed for production, but useful for testing."""
         
-        adding = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf","RCLee.pdf","Ricci.pdf","SKYLee.pdf", "SJC.pdf","Starr.pdf","SCSH.pdf", "Swire.pdf", "UH.pdf", "WL.pdf"]
-        #adding = []
+        #adding = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf","RCLee.pdf","Ricci.pdf","SKYLee.pdf", "SJC.pdf","Starr.pdf","SCSH.pdf", "Swire.pdf", "UH.pdf", "WL.pdf"]
+        adding = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "UH.pdf", "SJC.pdf", "Ricci.pdf", "LHTH.pdf"]
         for filename in adding:
             extracted_applicants = process(filename, conn)
             print(f"  Found {len(extracted_applicants)} applicants for {filename}.")
@@ -137,13 +138,13 @@ if __name__ == "__main__":
                 insert_applicant(
                     conn,
                     (applicant['UID'], applicant['College'], applicant['Status'],
-                     applicant['Room_Type'], applicant['Degree'], applicant['Student_Status'])
+                     applicant['Room_Type'], applicant['Degree'], applicant['Student_Status'], applicant['Year'])
                 )
 
             print(f"  Data from {filename} inserted/skipped successfully.")
         
         summary = get_admission_summary(conn)
         for row in summary:
-            college, status, count = row
-            print(f"College: {college}, Status: {status}, Count: {count}")
+            year, college, status, count = row
+            print(f"Year: {year}, College: {college}, Status: {status}, Count: {count}")
     

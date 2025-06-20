@@ -1,6 +1,6 @@
 import pdfplumber
 import re
-
+year = 2023
 def jcsv3(path):
     match path:
             case "SHC.pdf":
@@ -11,7 +11,7 @@ def jcsv3(path):
                 college = "Lap Chee College"
             case "NC.pdf":
                 college = "New College"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         for page in pdf.pages:
             text = page.extract_text()
@@ -28,13 +28,13 @@ def jcsv3(path):
                 matches = re.findall(successful_pattern, section)
                 for match in matches:
                     uid, room_type = match.split()
-                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': room_type, 'Degree': None, 'Student_Status': None})
+                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': room_type, 'Degree': None, 'Student_Status': None, 'Year': year})
             else:
                 successful_pattern = r"\d{10}"
                 matches = re.findall(successful_pattern, section)
                 for match in matches:
                     uid = match
-                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': "Double", 'Degree': None, 'Student_Status': None})
+                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': "Double", 'Degree': None, 'Student_Status': None, 'Year': year})
             
             if text.find("Waitlisted Applicants") != -1:
                 section = text[wait_start:un_start]
@@ -42,14 +42,14 @@ def jcsv3(path):
                 matches = re.findall(wait_pattern, section)
                 for match in matches:
                     uid = match
-                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
 
             section = text[un_start:]
             unsuccessful_pattern = r"\d{10}"
             matches = re.findall(unsuccessful_pattern, section)
             for match in matches:
                 uid = match
-                applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+                applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def jcsv4(path):
     match path:
@@ -61,7 +61,7 @@ def jcsv4(path):
                 college = "2nd College"
             case "KCC.pdf":
                 college = "Karson Choi College"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         room_type = "Single"
         for page in pdf.pages:
@@ -79,7 +79,7 @@ def jcsv4(path):
             matches = re.findall(successful_pattern, section)
             for match in matches:
                 uid = match
-                applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': room_type, 'Degree': None, 'Student_Status': None})
+                applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': room_type, 'Degree': None, 'Student_Status': None, 'Year': year})
             
             #Waitlisted Applicants
             if text.find("Waitlisted Applicants") != -1:
@@ -88,7 +88,7 @@ def jcsv4(path):
                 matches = re.findall(wait_pattern, section)
                 for match in matches:
                     uid = match
-                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+                    applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
 
             # Unsuccessful Applicants
             section = text[un_start:]
@@ -96,7 +96,7 @@ def jcsv4(path):
             matches = re.findall(unsuccessful_pattern, section)
             for match in matches:
                 uid = match
-                applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+                applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def jcsv2(path):
     match path:
@@ -106,7 +106,7 @@ def jcsv2(path):
             college = "Morrison Hall"
         case "SCSH.pdf":
             college = "Suen Chi Sun Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -119,12 +119,12 @@ def jcsv2(path):
         matches = re.findall(pattern, text)
         for match in matches:
             uid, status = match.split()
-            applicant_data.append({'UID': uid, 'College': college, 'Status': status, 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': status, 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
             
     return applicant_data
 def lhth(path):
     college = "Lady Ho Tung Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -141,7 +141,7 @@ def lhth(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
             
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -149,11 +149,11 @@ def lhth(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def lhh(path):
     college = "Lee Hysan Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -174,7 +174,7 @@ def lhh(path):
         matches = re.findall(pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local"})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local", 'Year': year})
             
         # Unsuccessful Local Applicants
         section = text[b:c]
@@ -182,7 +182,7 @@ def lhh(path):
         matches = re.findall(pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local"})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local", 'Year': year})
         
         # Pending Local Applicants
         section = text[c:d]
@@ -190,7 +190,7 @@ def lhh(path):
         matches = re.findall(pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local"})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Local", 'Year': year})
         
         # Successful Non-local Applicants
         section = text[d:e]
@@ -198,7 +198,7 @@ def lhh(path):
         matches = re.findall(pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Non-local"})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Non-local", 'Year': year})
         
         # Unsuccessful Non-local Applicants
         section = text[e:f]
@@ -206,7 +206,7 @@ def lhh(path):
         matches = re.findall(pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Non-local"})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Undergraduate", 'Student_Status': "Non-local", 'Year': year})
         
         # Successful Postgraduate Applicants
         section = text[f:g]
@@ -214,7 +214,7 @@ def lhh(path):
         matches = re.findall(pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Postgraduate", 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': "Postgraduate", 'Student_Status': None, 'Year': year})
         
         # Unsuccessful Postgraduate Applicants
         section = text[g:]
@@ -222,11 +222,11 @@ def lhh(path):
         matches = re.findall(pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Postgraduate", 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': "Postgraduate", 'Student_Status': None, 'Year': year})
     return applicant_data
 def rclee(path):
     college = "RC Lee Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -246,7 +246,7 @@ def rclee(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
         
         #Waitlisted Local Applicants
         section = text[w_start:w_st]
@@ -254,7 +254,7 @@ def rclee(path):
         matches = re.findall(wait_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': "Local"})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': "Local", 'Year': year})
         
         #Waitlisted Non-local Applicants
         section = text[w_st:un_start]
@@ -262,7 +262,7 @@ def rclee(path):
         matches = re.findall(wait_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': "Non-local"})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': "Non-local", 'Year': year})
         
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -270,12 +270,12 @@ def rclee(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def ricci(path):
     college = "Ricci Hall"
     room_type = "Single"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         text = ""
         for page in pdf.pages:
@@ -293,7 +293,7 @@ def ricci(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': room_type, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': room_type, 'Degree': None, 'Student_Status': None, 'Year': year})
 
         #Waitlisted Applicants
         section = text[w_start:un_start]
@@ -301,7 +301,7 @@ def ricci(path):
         matches = re.findall(wait_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
         
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -309,11 +309,12 @@ def ricci(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
+    print(applicant_data)
     return applicant_data
 def skylee(path):
     college = "Simon K.Y. Lee Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -332,7 +333,7 @@ def skylee(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
         
         #Waitlisted Applicants
         section = text[w_start:un_start]
@@ -340,7 +341,7 @@ def skylee(path):
         matches = re.findall(wait_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
             
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -348,11 +349,11 @@ def skylee(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def sjc(path):
     college = "St John's College"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -370,7 +371,7 @@ def sjc(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': "Single", 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': "Single", 'Degree': None, 'Student_Status': None, 'Year': year})
         
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -378,11 +379,11 @@ def sjc(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def starr(path):
     college = "Starr Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -400,7 +401,7 @@ def starr(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
         
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -408,11 +409,11 @@ def starr(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def swire(path):
     college = "Swire Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -430,7 +431,7 @@ def swire(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
         
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -438,11 +439,11 @@ def swire(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def uh(path):
     college = "University Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -461,7 +462,7 @@ def uh(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
         
         #Waitlisted Applicants
         section = text[w_start:un_start]
@@ -469,7 +470,7 @@ def uh(path):
         matches = re.findall(wait_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Waitlisted', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
             
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -477,11 +478,11 @@ def uh(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
 def wl(path):
     college = "Wei Lun Hall"
-    with pdfplumber.open(f"Fun/data/{path}") as pdf:
+    with pdfplumber.open(f"Fun/data/{year}/{path}") as pdf:
         applicant_data = []
         
         text = ""
@@ -499,7 +500,7 @@ def wl(path):
         matches = re.findall(successful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Successful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
         
         # Unsuccessful Applicants
         section = text[un_start:]
@@ -507,5 +508,5 @@ def wl(path):
         matches = re.findall(unsuccessful_pattern, section)
         for match in matches:
             uid = match
-            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None})
+            applicant_data.append({'UID': uid, 'College': college, 'Status': 'Unsuccessful', 'Room_Type': None, 'Degree': None, 'Student_Status': None, 'Year': year})
     return applicant_data
