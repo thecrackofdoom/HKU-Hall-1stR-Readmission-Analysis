@@ -22,12 +22,14 @@ def create_table(conn):
         # SQL statement to create a table
         sql_create_applicants_table = """
         CREATE TABLE IF NOT EXISTS applicants (
-            applicant_id TEXT PRIMARY KEY,
+            applicant_id TEXT ,
             college TEXT NOT NULL,
             admission_status TEXT NOT NULL,
             room_type TEXT,
             degree TEXT,
-            student_status TEXT
+            student_status TEXT,
+            year INTERGER NOT NULL default (2025),
+            PRIMARY KEY(applicant_id, year)
         );
         """
         cursor = conn.cursor()
@@ -126,8 +128,8 @@ if __name__ == "__main__":
         print("Cleared existing data from 'applicants' table.")
         Not needed for production, but useful for testing."""
         
-        added = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf","RCLee.pdf","Ricci.pdf","SKYLee.pdf", "SJC.pdf","Starr.pdf","SCSH.pdf", "Swire.pdf", "UH.pdf", "WL.pdf"]
-        adding = []
+        adding = ["SHC.pdf", "CSC.pdf", "LCC.pdf", "NC.pdf", "DHC.pdf", "1.pdf", "2.pdf", "KCC.pdf","LHTH.pdf","LHH.pdf","LSK.pdf","MH.pdf","RCLee.pdf","Ricci.pdf","SKYLee.pdf", "SJC.pdf","Starr.pdf","SCSH.pdf", "Swire.pdf", "UH.pdf", "WL.pdf"]
+        #adding = []
         for filename in adding:
             extracted_applicants = process(filename, conn)
             print(f"  Found {len(extracted_applicants)} applicants for {filename}.")
