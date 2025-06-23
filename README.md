@@ -10,9 +10,19 @@ A small visualization of hall&college readmission rate in HKU. Manually extracti
 **2025 (latest):**
 - Chi Sun and Shun Hing as expected are very competitive; CS accepts 1st round only around 46% of applicants, while Shun Hing accepts around 55%.
 - By comparison, Lap Chee and New College accepted more than 60% of applicants, with LC notably waitlisted 15%.
+
+![Alt Text](assets/Figure_4.png)
+
 - Across all Hall/ Colleges, DH Chen, Ricci and St. John's accepted around 90% of applicants, which aligned with previous analysis.
 - Among local halls, Lady Ho Tung and Suen Chi Sun both have lower than 60% readmission rate, signifying their competitive nature.
-- Overall, about 65% of applicants are able to secure a place for next year, which reflects the competion for university accommodation. This also includes the 4th - seniors who are kicked out because of the new maximum 3 years accommodation rule.
+
+![Alt Text](assets/Figure_5.png)
+
+- Overall, about 65% of applicants are able to secure a place for next year, which reflects the competion for university accommodation. This also includes the seniors who are kicked out because of the new maximum 3 years accommodation rule.
+
+![Alt Text](assets/Figure_6.png)
+
+
 ## Scalability:
 - Auto-classification of pdfs to select extraction templates
 - Error checking 
