@@ -18,9 +18,25 @@ def create_connection(db_file):
     return conn
 
 def individual_analysis(df):
-    print("\n'College' column (Series): ", df.loc[df["year"] == 2024, "college"].unique())
-
-
+    colleges = df.loc[df["year"] == 2024, "college"].unique()
+    data = []
+    for college in colleges:
+        for year in df["year"].unique():
+            college_yr = df[(df["college"] == college) & (df["year"] == year)]
+            total_applicants = college_yr.shape[0]
+            figures = college_yr.get('admission_status').value_counts().to_dict()
+            for key, value in figures.items():
+                data.append({
+                    "year": year,
+                    "college": college,
+                    "admission_status": key,
+                    "percentage": round(value / total_applicants * 100, 3)
+                })
+    plot_data = pd.DataFrame(data)
+    print(plot_data)
+        
+                
+                
 if __name__ == "__main__":
     database_file = "Personal_Projects/HKUHall/admission_results.db"
     print("Using database file:", os.path.abspath(database_file))
