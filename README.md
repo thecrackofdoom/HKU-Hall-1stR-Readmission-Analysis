@@ -22,6 +22,23 @@ A small visualization of hall&college readmission rate in HKU. Manually extracti
 
 ![Alt Text](assets/Figure_6.png)
 
+**Across 3 years:**
+- Chi Sun is the most particular case, with competition rocketed since 2023. Due to the new policy, the readmission rate has fallen to around 60% of the 2023 rate.
+
+![Alt Text](assets/Chi_Sun_College_Admission_YoY.png)
+  
+-  New College and Shun Hing are consistent across all years, with Shun Hing accepting around 55% and New College around 63%.
+
+![Alt Text](assets/New_College_Admission_YoY.png)
+![Alt Text](assets/Shun_Hing_College_Admission_YoY.png)
+
+- Lap Chee became more competitive too, but is still quite relaxed comparing to CS and SH.
+
+![Alt Text](assets/Lap_Chee_College_Admission_YoY.png)
+ 
+- Ricci, St. John's and University Hall has a consistently high readmission rate, with St. John's having the lowest StDev.
+
+![Alt Text](assets/St_John's_College_Admission_YoY.png)
 
 ## Scalability:
 - Auto-classification of pdfs to select extraction templates
